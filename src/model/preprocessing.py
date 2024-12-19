@@ -63,7 +63,7 @@ class Preprocessing():
             raise ValueError("Threshold must be a float between 0 and 1.")
         
         # Compute the norm of each observation
-        norms = np.linalg.norm(data, axis=1)
+        norms = np.linalg.norm(data, ord=1, axis=1)
         
         # Determine the cutoff value for the top `threshold` percentage
         cutoff = np.percentile(norms, 100 * (1 - threshold))
@@ -71,7 +71,7 @@ class Preprocessing():
         # Filter the data to keep only observations with norms above the cutoff
         filtered_data = data[norms > cutoff]
         
-        return filtered_data
+        return filtered_data, cutoff
 
 
     @staticmethod
@@ -81,7 +81,9 @@ class Preprocessing():
 
     @staticmethod
     def process(data, threshold=0.05):
-        data = Preprocessing.transform_to_extreme_values(data)
-        data = Preprocessing.filter_largest(data, threshold)
-        data = Preprocessing.project_onto_unit_sphere(data)
-        return data
+        extreme_data = Preprocessing.transform_to_extreme_values(data)
+        filtered_data, _ = Preprocessing.filter_largest(extreme_data, threshold)
+        projected_data = Preprocessing.project_onto_unit_sphere(filtered_data)
+        return projected_data
+
+    
