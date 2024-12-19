@@ -71,16 +71,21 @@ class ExtremeSphericalKMeans:
         # Preprocess the data (normalize each vector to have unit norm)
         self.X = Preprocessing.process(X, self.threshold)
 
+        # Initalization with KMeans
+        kmeans = KMeans(n_clusters=self.n_clusters, n_init=self.n_init)
+        kmeans.fit(self.X)
+
         # Initialize labels
-        labels = np.random.randint(low=0, high=self.n_clusters, size=self.X.shape[0])
+        labels = kmeans.labels_
         
         # Compute initial centroids
-        new_centroids = self._compute_centroid(self.X, labels)
-        centroids = new_centroids.copy() + 4
+        new_centroids = kmeans.cluster_centers_
+        centroids = new_centroids.copy() + 4 * np.ones_like(new_centroids)
         
         for _ in range(self.max_iter):
             # Compute new labels
             labels = self._labelize(self.X, new_centroids)
+            print(labels)
 
             # Compute new centroids
             new_centroids = self._compute_centroid(self.X, labels)
