@@ -70,8 +70,9 @@ class Preprocessing():
         
         # Filter the data to keep only observations with norms above the cutoff
         filtered_data = data[norms > cutoff]
+        retained_indices = np.where(norms > cutoff)[0]
         
-        return filtered_data, cutoff
+        return filtered_data, cutoff, retained_indices
 
 
     @staticmethod
@@ -80,10 +81,8 @@ class Preprocessing():
 
 
     @staticmethod
-    def process(data, threshold=0.05):
+    def process(data, threshold=0.2):
         extreme_data = Preprocessing.transform_to_extreme_values(data)
-        filtered_data, _ = Preprocessing.filter_largest(extreme_data, threshold)
+        filtered_data, _, retained_indices = Preprocessing.filter_largest(extreme_data, threshold)
         projected_data = Preprocessing.project_onto_unit_sphere(filtered_data)
-        return projected_data
-
-    
+        return projected_data, retained_indices

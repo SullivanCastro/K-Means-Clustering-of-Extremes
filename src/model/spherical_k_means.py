@@ -69,11 +69,12 @@ class ExtremeSphericalKMeans:
             The input data to cluster, normalized beforehand.
         """
         # Preprocess the data (normalize each vector to have unit norm)
-        self.X = Preprocessing.process(X, self.threshold)
+        self.X, _ = Preprocessing.process(X, self.threshold)
 
         # Initalization with KMeans
         kmeans = KMeans(n_clusters=self.n_clusters, n_init=self.n_init)
         kmeans.fit(self.X)
+
 
         # Initialize labels
         labels = kmeans.labels_
@@ -85,7 +86,6 @@ class ExtremeSphericalKMeans:
         for _ in range(self.max_iter):
             # Compute new labels
             labels = self._labelize(self.X, new_centroids)
-            print(labels)
 
             # Compute new centroids
             new_centroids = self._compute_centroid(self.X, labels)
@@ -120,7 +120,7 @@ class ExtremeSphericalKMeans:
             Index of the cluster each sample belongs to.
         """
         # Preprocess the data (normalize each vector to have unit norm)
-        X = Preprocessing.process(X, self.threshold)
+        X, _ = Preprocessing.process(X, self.threshold)
         
         # Compute cosine similarity with cluster centers
         similarity = self._compute_cosine_similarity(X, self.cluster_centers_)
